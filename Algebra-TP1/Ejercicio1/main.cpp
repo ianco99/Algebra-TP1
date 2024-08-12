@@ -1,5 +1,6 @@
 #include <iostream>
 #include "raylib.h"
+#include "raymath.h"
 #include <vector>
 
 using namespace std;
@@ -8,7 +9,10 @@ struct Segment
 {
 	Vector2 p1;
 	Vector2 p2;
+	Vector2 distance;
 };
+
+void CheckSegmentCollisions(Segment segments[], int totalSegments);
 
 int main()
 {
@@ -41,6 +45,7 @@ int main()
 
 					segment.p1 = playerPoints[last - 1];
 					segment.p2 = playerPoints[last];
+					segment.distance = Vector2Subtract(segment.p2,segment.p1);
 					playerSegments[currentSegment] = segment;
 					currentSegment++;
 				}
@@ -61,7 +66,30 @@ int main()
 			DrawCircle(playerPoints[i].x, playerPoints[i].y, 2.0f, RED);
 		}
 		EndDrawing();
+		
+		if (currentSegment > 1)
+		{
+			CheckSegmentCollisions(playerSegments, currentSegment);
+		}
 	}
 
 	return 0;
+}
+
+void CheckSegmentCollisions(Segment segments[], int totalSegments)
+{
+	Segment currSegment;
+	Segment nextSegment;
+
+	for (int i = 0; i < totalSegments; i++)
+	{
+		currSegment = segments[i];
+
+		for (int j = i+1; j < totalSegments; j++)
+		{
+			nextSegment = segments[j];
+
+
+		}
+	}
 }
