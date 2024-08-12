@@ -13,6 +13,7 @@ int main()
 
 	InitWindow(screenWidth, screenHeight, "Algebra - Ejercicio 1");
 
+	//userloop
 	while (!WindowShouldClose())
 	{
 		if (IsMouseButtonPressed(MOUSE_BUTTON_LEFT))
