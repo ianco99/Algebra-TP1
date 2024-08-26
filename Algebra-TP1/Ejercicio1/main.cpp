@@ -13,6 +13,8 @@ struct Segment
 };
 
 void CheckSegmentCollisions(Segment segments[], int totalSegments);
+bool LineLineCollision(Segment segmentA, Segment segmentB);
+Vector2 GetCollisionPoints(Segment segmentA, Segment segmentB);
 
 int main()
 {
@@ -39,12 +41,16 @@ int main()
 
 				if (playerPoints.size() % 2 == 0 && playerPoints.size() > 0)
 				{
-					cout << playerPoints.size();
+					cout << playerPoints.size() << endl;
 					Segment segment;
 					int last = playerPoints.size() - 1;
 
 					segment.p1 = playerPoints[last - 1];
 					segment.p2 = playerPoints[last];
+
+					cout << segment.p1.x << ", " << segment.p1.y << endl;
+					cout << segment.p2.x << ", " << segment.p2.y << endl;
+
 					segment.distance = Vector2Subtract(segment.p2,segment.p1);
 					playerSegments[currentSegment] = segment;
 					currentSegment++;
@@ -72,9 +78,10 @@ int main()
 			CheckSegmentCollisions(playerSegments, currentSegment);
 		}
 	}
-
+	//bfgghg
 	return 0;
 }
+
 
 void CheckSegmentCollisions(Segment segments[], int totalSegments)
 {
@@ -89,7 +96,44 @@ void CheckSegmentCollisions(Segment segments[], int totalSegments)
 		{
 			nextSegment = segments[j];
 
-
+			if (LineLineCollision(currSegment, nextSegment))
+			{
+				cout << "COLLISION LINE";
+			}
+			else
+			{
+			}
 		}
 	}
+}
+
+//https://www.jeffreythompson.org/collision-detection/line-line.php
+bool LineLineCollision(Segment segmentA, Segment segmentB)
+{
+	float distancePointOne = ((segmentB.p2.x - segmentB.p1.x) * (segmentA.p1.y - segmentB.p1.y) - ((segmentB.p2.y - segmentB.p1.y) * (segmentA.p1.x - segmentB.p1.x)
+		/ ((segmentB.p2.y - segmentB.p1.y) * (segmentA.p2.x - segmentA.p1.x) - (segmentB.p2.x - segmentB.p1.x) * (segmentA.p2.y - segmentA.p1.y))));
+
+	float distancePointTwo = ((segmentA.p2.x - segmentA.p1.x) * (segmentA.p1.y - segmentB.p1.y) - ((segmentA.p2.y - segmentA.p1.y) * (segmentA.p1.x - segmentB.p1.x)
+		/ ((segmentB.p2.y - segmentB.p1.y) * (segmentA.p2.x - segmentA.p1.x) - (segmentB.p2.x - segmentB.p1.x) * (segmentA.p2.y - segmentA.p1.y))));
+
+	return distancePointOne >= 0 && distancePointOne <= 1 && distancePointTwo >= 0 && distancePointTwo <= 1;
+}
+
+Vector2 GetCollisionPoints(Segment segmentA, Segment segmentB)
+{
+	float distancePointOne = ((segmentB.p2.x - segmentB.p1.x) * (segmentA.p1.y - segmentB.p1.y) - ((segmentB.p2.y - segmentB.p1.y) * (segmentA.p1.x - segmentB.p1.x)
+		/ ((segmentB.p2.y - segmentB.p1.y) * (segmentA.p2.x - segmentA.p1.x) - (segmentB.p2.x - segmentB.p1.x) * (segmentA.p2.y - segmentA.p1.y))));
+
+	float distancePointTwo = ((segmentA.p2.x - segmentA.p1.x) * (segmentA.p1.y - segmentB.p1.y) - ((segmentA.p2.y - segmentA.p1.y) * (segmentA.p1.x - segmentB.p1.x)
+		/ ((segmentB.p2.y - segmentB.p1.y) * (segmentA.p2.x - segmentA.p1.x) - (segmentB.p2.x - segmentB.p1.x) * (segmentA.p2.y - segmentA.p1.y))));
+
+	if (distancePointOne >= 0 && distancePointOne <= 1 && distancePointTwo >= 0 && distancePointTwo <= 1)
+	{
+		float intersectionX = segmentA.p1.x + (distancePointOne * (segmentA.p2.x - segmentA.p1.x));
+		float intersectionY = segmentA.p1.y + (distancePointOne * (segmentA.p2.y - segmentA.p1.y));
+
+		return Vector2{ intersectionX, intersectionY };
+	}
+
+	return { 0,0 };
 }
