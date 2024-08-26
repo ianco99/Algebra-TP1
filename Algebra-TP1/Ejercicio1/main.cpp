@@ -121,6 +121,7 @@ void CheckSegmentCollisions(Segment segments[], int totalSegments, vector<Vector
 void CreateSides(vector<Vector2> collisionPoints)
 {
 	vector<Segment> sidesCreated;
+
 	for (int i = 0; i < collisionPoints.size(); i++)
 	{
 		for (int j = i + 1; j < collisionPoints.size(); j++)
@@ -131,17 +132,21 @@ void CreateSides(vector<Vector2> collisionPoints)
 			Vector2 nextPoint = collisionPoints[j];
 			Segment side{ currentPoint, nextPoint };
 
-			for (int k = 0; k < sidesCreated.size(); k++)
-			{
-				Vector2 createdPointA = sidesCreated[k].p1;
-				Vector2 createdPointB = sidesCreated[k].p2;
-
-				
-				if (Vector2Equals(side.p1, createdPointA) && Vector2Equals(side.p2, createdPointB))
-				{
-					repeatedSide = true;
-				}
-			}
+			//for (int k = 0; k < sidesCreated.size(); k++)
+			//{
+			//	Vector2 createdPointA = sidesCreated[k].p1;
+			//	Vector2 createdPointB = sidesCreated[k].p2;
+			//
+			//	
+			//	if (Vector2Equals(side.p1, createdPointA) || Vector2Equals(side.p1, createdPointB))
+			//	{
+			//		if (Vector2Equals(side.p2, createdPointA) || Vector2Equals(side.p2, createdPointB))
+			//		{
+			//			repeatedSide = true;
+			//		}
+			//		
+			//	}
+			//}
 
 			if (repeatedSide == false)
 			{
