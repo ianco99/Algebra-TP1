@@ -78,7 +78,7 @@ int main()
 			CheckSegmentCollisions(playerSegments, currentSegment);
 		}
 	}
-	//bfgghg
+
 	return 0;
 }
 
@@ -110,13 +110,20 @@ void CheckSegmentCollisions(Segment segments[], int totalSegments)
 //https://www.jeffreythompson.org/collision-detection/line-line.php
 bool LineLineCollision(Segment segmentA, Segment segmentB)
 {
-	float distancePointOne = ((segmentB.p2.x - segmentB.p1.x) * (segmentA.p1.y - segmentB.p1.y) - ((segmentB.p2.y - segmentB.p1.y) * (segmentA.p1.x - segmentB.p1.x)
-		/ ((segmentB.p2.y - segmentB.p1.y) * (segmentA.p2.x - segmentA.p1.x) - (segmentB.p2.x - segmentB.p1.x) * (segmentA.p2.y - segmentA.p1.y))));
+	float x1 = segmentA.p1.x;
+	float x2 = segmentA.p2.x;
+	float x3 = segmentB.p1.x;
+	float x4 = segmentB.p2.x;
+	float y1 = segmentA.p1.y;
+	float y2 = segmentA.p2.y;
+	float y3 = segmentB.p1.y;
+	float y4 = segmentB.p2.y;
 
-	float distancePointTwo = ((segmentA.p2.x - segmentA.p1.x) * (segmentA.p1.y - segmentB.p1.y) - ((segmentA.p2.y - segmentA.p1.y) * (segmentA.p1.x - segmentB.p1.x)
-		/ ((segmentB.p2.y - segmentB.p1.y) * (segmentA.p2.x - segmentA.p1.x) - (segmentB.p2.x - segmentB.p1.x) * (segmentA.p2.y - segmentA.p1.y))));
+	float uA = ((x4 - x3) * (y1 - y3) - (y4 - y3) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
 
-	return distancePointOne >= 0 && distancePointOne <= 1 && distancePointTwo >= 0 && distancePointTwo <= 1;
+	float uB = ((x2 - x1) * (y1 - y3) - (y2 - y1) * (x1 - x3)) / ((y4 - y3) * (x2 - x1) - (x4 - x3) * (y2 - y1));
+
+	return uA >= 0 && uA <= 1 && uB >= 0 && uB <= 1;
 }
 
 Vector2 GetCollisionPoints(Segment segmentA, Segment segmentB)
