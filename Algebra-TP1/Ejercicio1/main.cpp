@@ -12,15 +12,18 @@ struct Segment
 	Vector2 distance;
 };
 
-void CheckSegmentCollisions(Segment segments[], int totalSegments);
+void CheckSegmentCollisions(Segment segments[], int totalSegments, vector<Vector2>& collisionPoints);
 bool LineLineCollision(Segment segmentA, Segment segmentB);
 Vector2 GetCollisionPoints(Segment segmentA, Segment segmentB);
+void CreateSides(vector<Vector2> collisionPoints);
 
 int main()
 {
-	
+
 	vector<Vector2> playerPoints = vector<Vector2>();
 	Segment playerSegments[4] = {};
+
+	vector<Vector2> collisionPoints;
 
 	const int screenWidth = 800;
 	const int screenHeight = 450;
@@ -52,7 +55,7 @@ int main()
 					cout << segment.p1.x << ", " << segment.p1.y << endl;
 					cout << segment.p2.x << ", " << segment.p2.y << endl;
 
-					segment.distance = Vector2Subtract(segment.p2,segment.p1);
+					segment.distance = Vector2Subtract(segment.p2, segment.p1);
 					playerSegments[currentSegment] = segment;
 					currentSegment++;
 				}
@@ -73,11 +76,13 @@ int main()
 			DrawCircle(playerPoints[i].x, playerPoints[i].y, 2.0f, RED);
 		}
 		EndDrawing();
-		
+
 		if (currentSegment > 3 && !checkCollision)
 		{
-			CheckSegmentCollisions(playerSegments, currentSegment);
 			checkCollision = true;
+
+			CheckSegmentCollisions(playerSegments, currentSegment, collisionPoints);
+			CreateSides(collisionPoints);
 		}
 	}
 
@@ -85,7 +90,7 @@ int main()
 }
 
 
-void CheckSegmentCollisions(Segment segments[], int totalSegments)
+void CheckSegmentCollisions(Segment segments[], int totalSegments, vector<Vector2>& collisionPoints)
 {
 	Segment currSegment;
 	Segment nextSegment;
@@ -94,20 +99,65 @@ void CheckSegmentCollisions(Segment segments[], int totalSegments)
 	{
 		currSegment = segments[i];
 
-		for (int j = i+1; j < totalSegments; j++)
+		for (int j = i + 1; j < totalSegments; j++)
 		{
 			nextSegment = segments[j];
 
 			if (LineLineCollision(currSegment, nextSegment))
 			{
 				Vector2 point = GetCollisionPoints(currSegment, nextSegment);
-				cout << "COLLISION LINE" << endl;
-				cout << "X: " << point.x << " , Y: " << point.y << endl;
-			}
-			else
-			{
+
+				collisionPoints.push_back(point);
 			}
 		}
+	}
+
+	for (int i = 0; i < collisionPoints.size(); i++)
+	{
+		cout << "POINT NUMBER " << i << ": " << "X: " << collisionPoints[i].x << " , Y: " << collisionPoints[i].y << endl;
+	}
+}
+
+void CreateSides(vector<Vector2> collisionPoints)
+{
+	vector<Segment> sidesCreated;
+	for (int i = 0; i < collisionPoints.size(); i++)
+	{
+		for (int j = i + 1; j < collisionPoints.size(); j++)
+		{
+			bool repeatedSide = false;
+
+			Vector2 currentPoint = collisionPoints[i];
+			Vector2 nextPoint = collisionPoints[j];
+			Segment side{ currentPoint, nextPoint };
+
+			for (int k = 0; k < sidesCreated.size(); k++)
+			{
+				Vector2 createdPointA = sidesCreated[k].p1;
+				Vector2 createdPointB = sidesCreated[k].p2;
+
+				
+				if (Vector2Equals(side.p1, createdPointA) && Vector2Equals(side.p2, createdPointB))
+				{
+					repeatedSide = true;
+				}
+			}
+
+			if (repeatedSide == false)
+			{
+				sidesCreated.push_back(side);
+			}
+		}
+	}
+
+	for (int i = 0; i < sidesCreated.size(); i++)
+	{
+		Segment side = sidesCreated[i];
+
+		cout << "SIDE " << i+1 << " :" << endl;
+		cout << "START : " <<  side.p1.x << " , " << side.p1.y << endl;
+		cout << "END : " <<  side.p2.x << " , " << side.p2.y << endl;
+		cout << endl << endl;
 	}
 }
 
