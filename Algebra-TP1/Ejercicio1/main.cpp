@@ -9,7 +9,7 @@ struct Segment
 {
 	Vector2 p1;
 	Vector2 p2;
-	Vector2 distance;
+	float distance;
 };
 
 void CheckSegmentCollisions(Segment segments[], int totalSegments, vector<Vector2>& collisionPoints);
@@ -17,6 +17,9 @@ bool LineLineCollision(Segment segmentA, Segment segmentB);
 Vector2 GetCollisionPoints(Segment segmentA, Segment segmentB);
 void CreateSides(vector<Vector2> collisionPoints);
 void Create4SidedFigure(vector<Segment> sidesCreated);
+bool StartMatchesEnd(Segment segmentA, Segment segmentB);
+bool EndMatchesStart(Segment segmentA, Segment segmentB);
+void CalculateAreaAndPerimeter(Segment figure[]);
 
 int main()
 {
@@ -56,7 +59,7 @@ int main()
 					cout << segment.p1.x << ", " << segment.p1.y << endl;
 					cout << segment.p2.x << ", " << segment.p2.y << endl;
 
-					segment.distance = Vector2Subtract(segment.p2, segment.p1);
+					segment.distance = Vector2Distance(segment.p2, segment.p1);
 					playerSegments[currentSegment] = segment;
 					currentSegment++;
 				}
@@ -131,7 +134,7 @@ void CreateSides(vector<Vector2> collisionPoints)
 
 			Vector2 currentPoint = collisionPoints[i];
 			Vector2 nextPoint = collisionPoints[j];
-			Segment side{ currentPoint, nextPoint };
+			Segment side{ currentPoint, nextPoint, Vector2Distance(currentPoint,nextPoint)};
 
 			//for (int k = 0; k < sidesCreated.size(); k++)
 			//{
@@ -180,51 +183,74 @@ void Create4SidedFigure(vector<Segment> sidesCreated)
 	int currentSegmentIndex = 0;
 	Segment currentSegment;
 	currentSegment = sidesCreated[0];
+	figure[0] = currentSegment;
 
-	while (currentIndex < 4)
+	while (currentIndex < 3)
 	{
-		for (int j = 0; j < sidesCreated.size(); j++)
+		foundConnectedSide = false;
+
+		for (int i = 0; i < sidesCreated.size(); i++)
 		{
-			if (((sidesCreated[j].p1.x == currentSegment.p2.x && sidesCreated[j].p1.y == currentSegment.p2.y)
-				|| (sidesCreated[j].p2.x == currentSegment.p1.x && sidesCreated[j].p2.y == currentSegment.p1.y)
-				|| (sidesCreated[j].p1.x == currentSegment.p1.x && sidesCreated[j].p1.y == currentSegment.p1.y)
-				|| (sidesCreated[j].p2.x == currentSegment.p2.x && sidesCreated[j].p2.y == currentSegment.p2.y))
-				&& !foundConnectedSide && j != currentSegmentIndex)
+			if (!foundConnectedSide)
 			{
-				figure[currentIndex] = sidesCreated[j];
-				currentSegment = sidesCreated[j];
-				currentSegmentIndex = j;
-				currentIndex++;
-				foundConnectedSide = true;
+				//If not comparing same segments & found matching points
+				if (EndMatchesStart(currentSegment, sidesCreated[i]) && currentSegmentIndex != i)
+				{
+					currentIndex++;
+					currentSegmentIndex = i;
+					currentSegment = sidesCreated[i];
+					figure[currentIndex] = currentSegment;
+					foundConnectedSide = true;
+				}
+				else if (StartMatchesEnd(currentSegment, sidesCreated[i]) && currentSegmentIndex != i)
+				{
+					currentIndex++;
+					currentSegmentIndex = i;
+					currentSegment = sidesCreated[i];
+					figure[currentIndex] = currentSegment;
+					foundConnectedSide = true;
+				}
+
 			}
+
 		}
 
 		if (!foundConnectedSide)
 		{
-			cout << "FATAL ERROR";
+			cout << "fatalError" << endl;
 			foundFigure = false;
 			break;
 		}
 
-		foundConnectedSide = false;
 	}
 
-
-	if (foundFigure)
+	if (StartMatchesEnd(figure[0], figure[3]) || EndMatchesStart(figure[0], figure[3]))
 	{
-		cout << "FIGURE IS:" << endl;
+		cout << "FOUND FIGURE" << endl;
 
-		for (int i = 0; i < 4; i++)
-		{
-			Segment side = figure[i];
-
-			cout << "SIDE " << i + 1 << " :" << endl;
-			cout << "START : " << side.p1.x << " , " << side.p1.y << endl;
-			cout << "END : " << side.p2.x << " , " << side.p2.y << endl;
-			cout << endl << endl;
-		}
+		CalculateAreaAndPerimeter(figure);
+	}
+	else
+	{
+		cout << "Papelon" << endl;
 	}
 
+
+}
+
+bool EndMatchesStart(Segment segmentA, Segment segmentB)
+{
+	return Vector2Equals(segmentA.p2, segmentB.p1);
+}
+
+bool StartMatchesEnd(Segment segmentA, Segment segmentB)
+{
+	return Vector2Equals(segmentA.p1, segmentB.p2);
+}
+
+void CalculateAreaAndPerimeter(Segment figure[])
+{
+	cout << "PERIMETER: " << figure[0].distance + figure[1].distance + figure[2].distance + figure[3].distance << endl;
 }
 
 //https://www.jeffreythompson.org/collision-detection/line-line.php
