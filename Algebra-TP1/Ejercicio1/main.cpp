@@ -20,6 +20,7 @@ void Create4SidedFigure(vector<Segment> sidesCreated);
 bool StartMatchesEnd(Segment segmentA, Segment segmentB);
 bool EndMatchesStart(Segment segmentA, Segment segmentB);
 void CalculateAreaAndPerimeter(Segment figure[]);
+float CalculateAreaOfTriangle(float segmentAdistance, float segmentBdistance, float segmentCdistance);
 
 int main()
 {
@@ -248,9 +249,32 @@ bool StartMatchesEnd(Segment segmentA, Segment segmentB)
 	return Vector2Equals(segmentA.p1, segmentB.p2);
 }
 
-void CalculateAreaAndPerimeter(Segment figure[])
+void CalculateAreaAndPerimeter(Segment figure[4])
 {
+	float totalArea = 0;
+
 	cout << "PERIMETER: " << figure[0].distance + figure[1].distance + figure[2].distance + figure[3].distance << endl;
+
+	Segment diagonal = { figure[0].p1, figure[3].p1, Vector2Distance(figure[0].p1, figure[3].p1) };
+
+	totalArea += CalculateAreaOfTriangle(figure[0].distance, figure[1].distance, diagonal.distance);
+	totalArea += CalculateAreaOfTriangle(figure[2].distance, figure[3].distance, diagonal.distance);
+
+	cout << "AREA: " << totalArea;
+}
+
+//Teorema de Heron
+float CalculateAreaOfTriangle(float segmentAdistance, float segmentBdistance, float segmentCdistance)
+{
+	float semiperimeter = (segmentAdistance + segmentBdistance + segmentCdistance) / 2.0f;
+
+	float area = 0;
+
+	area = sqrt(semiperimeter * (semiperimeter - segmentAdistance)
+		* (semiperimeter - segmentBdistance)
+		* (semiperimeter - segmentCdistance));
+
+	return area;
 }
 
 //https://www.jeffreythompson.org/collision-detection/line-line.php
