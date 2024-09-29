@@ -16,6 +16,7 @@ void CheckSegmentCollisions(Segment segments[], int totalSegments, vector<Vector
 bool LineLineCollision(Segment segmentA, Segment segmentB);
 Vector2 GetCollisionPoints(Segment segmentA, Segment segmentB);
 void CreateSides(vector<Vector2> collisionPoints);
+void Create4SidedFigure(vector<Segment> sidesCreated);
 
 int main()
 {
@@ -159,11 +160,71 @@ void CreateSides(vector<Vector2> collisionPoints)
 	{
 		Segment side = sidesCreated[i];
 
-		cout << "SIDE " << i+1 << " :" << endl;
-		cout << "START : " <<  side.p1.x << " , " << side.p1.y << endl;
-		cout << "END : " <<  side.p2.x << " , " << side.p2.y << endl;
-		cout << endl << endl;
+		//cout << "SIDE " << i+1 << " :" << endl;
+		//cout << "START : " <<  side.p1.x << " , " << side.p1.y << endl;
+		//cout << "END : " <<  side.p2.x << " , " << side.p2.y << endl;
+		//cout << endl << endl;
 	}
+
+	if (sidesCreated.size() >= 4)
+		Create4SidedFigure(sidesCreated);
+}
+
+void Create4SidedFigure(vector<Segment> sidesCreated)
+{
+	Segment figure[4] = {};
+
+	bool foundConnectedSide = false;
+	bool foundFigure = true;
+	int currentIndex = 0;
+	int currentSegmentIndex = 0;
+	Segment currentSegment;
+	currentSegment = sidesCreated[0];
+
+	while (currentIndex < 4)
+	{
+		for (int j = 0; j < sidesCreated.size(); j++)
+		{
+			if (((sidesCreated[j].p1.x == currentSegment.p2.x && sidesCreated[j].p1.y == currentSegment.p2.y)
+				|| (sidesCreated[j].p2.x == currentSegment.p1.x && sidesCreated[j].p2.y == currentSegment.p1.y)
+				|| (sidesCreated[j].p1.x == currentSegment.p1.x && sidesCreated[j].p1.y == currentSegment.p1.y)
+				|| (sidesCreated[j].p2.x == currentSegment.p2.x && sidesCreated[j].p2.y == currentSegment.p2.y))
+				&& !foundConnectedSide && j != currentSegmentIndex)
+			{
+				figure[currentIndex] = sidesCreated[j];
+				currentSegment = sidesCreated[j];
+				currentSegmentIndex = j;
+				currentIndex++;
+				foundConnectedSide = true;
+			}
+		}
+
+		if (!foundConnectedSide)
+		{
+			cout << "FATAL ERROR";
+			foundFigure = false;
+			break;
+		}
+
+		foundConnectedSide = false;
+	}
+
+
+	if (foundFigure)
+	{
+		cout << "FIGURE IS:" << endl;
+
+		for (int i = 0; i < 4; i++)
+		{
+			Segment side = figure[i];
+
+			cout << "SIDE " << i + 1 << " :" << endl;
+			cout << "START : " << side.p1.x << " , " << side.p1.y << endl;
+			cout << "END : " << side.p2.x << " , " << side.p2.y << endl;
+			cout << endl << endl;
+		}
+	}
+
 }
 
 //https://www.jeffreythompson.org/collision-detection/line-line.php
