@@ -19,6 +19,7 @@ void CreateSides(vector<Vector2> collisionPoints);
 void Create4SidedFigure(vector<Segment> sidesCreated);
 bool StartMatchesEnd(Segment segmentA, Segment segmentB);
 bool EndMatchesStart(Segment segmentA, Segment segmentB);
+void CalculateAreaAndPerimeter(Segment figure[]);
 double CalculateAreaOfTriangle(float segmentAdistance, float segmentBdistance, float segmentCdistance);
 
 int main()
@@ -136,6 +137,22 @@ void CreateSides(vector<Vector2> collisionPoints)
 			Vector2 nextPoint = collisionPoints[j];
 			Segment side{ currentPoint, nextPoint, Vector2Distance(currentPoint,nextPoint) };
 
+			//for (int k = 0; k < sidesCreated.size(); k++)
+			//{
+			//	Vector2 createdPointA = sidesCreated[k].p1;
+			//	Vector2 createdPointB = sidesCreated[k].p2;
+			//
+			//	
+			//	if (Vector2Equals(side.p1, createdPointA) || Vector2Equals(side.p1, createdPointB))
+			//	{
+			//		if (Vector2Equals(side.p2, createdPointA) || Vector2Equals(side.p2, createdPointB))
+			//		{
+			//			repeatedSide = true;
+			//		}
+			//		
+			//	}
+			//}
+
 			if (repeatedSide == false)
 			{
 				sidesCreated.push_back(side);
@@ -146,6 +163,11 @@ void CreateSides(vector<Vector2> collisionPoints)
 	for (int i = 0; i < sidesCreated.size(); i++)
 	{
 		Segment side = sidesCreated[i];
+
+		//cout << "SIDE " << i+1 << " :" << endl;
+		//cout << "START : " <<  side.p1.x << " , " << side.p1.y << endl;
+		//cout << "END : " <<  side.p2.x << " , " << side.p2.y << endl;
+		//cout << endl << endl;
 	}
 
 	if (sidesCreated.size() >= 4)
